@@ -26,6 +26,7 @@ class wp_filter_action_parser {
 	function parse_file_list() {
 		if (is_array($this->file_list)) {
 			foreach ($this->file_list as $file) {
+				show($file);
 				$this->parse_file($file);
 			}
 		}
@@ -36,9 +37,7 @@ class wp_filter_action_parser {
 
 		// Check if file exists
 		if (!file_exists($file_name['fullpath'])) {
-			if ($this->verbose) {
-				echo "FILE NOT FOUND: " . $file_name['fullpath'] . "\n";
-			} 
+			show("FILE NOT FOUND: " . $file_name['fullpath']);
 			
 			// **** Add error processing here ****
 			
@@ -46,10 +45,8 @@ class wp_filter_action_parser {
 		}
 
 		// Read contents of file
-		if ($this->verbose) {
-			echo "PROCESSING: " . $file_name['fullpath'] . "\n";
-		} 
-
+		show("PROCESSING: " . $file_name['fullpath']);
+	
 		$file_contents = file_get_contents($file_name['fullpath']);
 		$file_lines = preg_split ('/$\R?^/m', $file_contents);
 
@@ -60,9 +57,7 @@ class wp_filter_action_parser {
 		foreach ($this->tokens as $key => $token) {
 			if ($token[0] == T_STRING) {
 				if (in_array($token[1], $this->strings_to_parse)) {
-					echo "   " . $token[1] . ' on line ' . $token[2];
-					echo " filter name: " . $this->get_filter_action_name($key);
-					echo "\n";
+					show("   " . $token[1] . ' on line ' . $token[2] . " filter name: " . $this->get_filter_action_name($key) );
 				}
 			}
 			//$this->tokens[$key][0] = token_name($token[0]);
