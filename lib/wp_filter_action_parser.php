@@ -26,7 +26,6 @@ class wp_filter_action_parser {
 	function parse_file_list() {
 		if (is_array($this->file_list)) {
 			foreach ($this->file_list as $file) {
-				show($file);
 				$this->parse_file($file);
 			}
 		}
@@ -53,11 +52,16 @@ class wp_filter_action_parser {
 		// Split file contents into PHP tokens
 		$this->tokens = token_get_all($file_contents);
 
+print_r($this->tokens);
+return;
+
 		// Iterate tokens
 		foreach ($this->tokens as $key => $token) {
 			if ($token[0] == T_STRING) {
 				if (in_array($token[1], $this->strings_to_parse)) {
 					show("   " . $token[1] . ' on line ' . $token[2] . " filter name: " . $this->get_filter_action_name($key) );
+
+					$this->process_find($key);
 				}
 			}
 			//$this->tokens[$key][0] = token_name($token[0]);
@@ -74,6 +78,24 @@ class wp_filter_action_parser {
 				return $this->tokens[$key][1];
 			}
 		}
+	}
+
+
+	function process_find($key) {
+		echo "-------------------------------------\n";
+
+		$stop = min($key + 20, count($this->tokens));
+
+		for ($x = $key; $x < $stop; $x++) {
+			$token = $this->tokens[$x];
+//			$token[0] = token_name((int) $token[0]);
+//			if (isset($token[1])) {
+//				$token[1] = '|' . $token[1] . '|';
+//			}
+			var_dump($token);
+		}
+
+
 	}
 
 

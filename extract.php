@@ -19,8 +19,6 @@ $options_short = ''
 	;
 $options = getopt($options_short);
 
-//var_dump($options);die;
-
 // Process $options['d']
 // Chop trailing / from directory
 if (isset($options['d']) && substr($options['d'], -1) == '/') {
@@ -32,6 +30,10 @@ if (isset($options['d']) && !is_dir($options['d'])) {
 }
 if (!isset($options['d'])) {
 	die("ERROR: no directory specified\n");
+}
+
+if (!isset($options['o'])) {
+	$output_file = 'fase-wp.txt';
 }
 
 // Process "verbosity"
