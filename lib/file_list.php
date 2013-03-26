@@ -26,7 +26,7 @@ class file_list {
 			if($file != '.' && $file != '..') {
 
 				if (in_array(pathinfo($dir.'/'.$file, PATHINFO_EXTENSION), $this->file_extensions)) {
-					show("."); 
+					//show("."); 
 					$this->file_list[] = array(
 						'dir' => $dir,
 						'file' => $file,
@@ -37,7 +37,7 @@ class file_list {
 			}
 		}
 		if ( $count == 0) {
-			show("\n");
+			//show("\n");
 		}
 	}
 
