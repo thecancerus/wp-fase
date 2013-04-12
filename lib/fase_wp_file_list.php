@@ -4,7 +4,7 @@
  * matching the provided extentions
  */
 
-class file_list {
+class fase_wp_file_list {
 
 	private $dir;
 	private $file_extensions;

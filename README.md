@@ -16,6 +16,6 @@ Some options, such as the directory, are required. The following options are ava
 
 	-d 	path to the directory to traverse. REQUIRED
 
-	-f 	File Types, comma seaparated (no spaces). Defaults to 'php,inc'.
+	-f 	File Types, comma separated (no spaces). Defaults to 'php,inc'.
 
 	-v 	Verbose mode, no parameters - turns on verbose reporting

@@ -5,7 +5,7 @@
  *		'file' => $file,
  *		'fullpath' => $dir . '/' . $file,
  */
-class wp_filter_action_parser {
+class fase_wp_filter_action_parser {
 
 	private $file_list;
 	private $parsed_files;
