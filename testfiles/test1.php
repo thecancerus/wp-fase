@@ -1,17 +1,55 @@
 <?php 
 
-// This file is mainly to verify that the extractor will find actions and filters of varying syntaxes.
+$foo = 'bar';
 
-$defaults = apply_filters('single_quote_name_no_spaces', $defaults);
-$defaults = apply_filters("double_quote_name_no_spaces", $defaults);
-$defaults = apply_filters($string_no_spaces, $defaults);
-$defaults = apply_filters ( 'single_quote_name_with_spaces', $defaults);
-$defaults = apply_filters ( "double_quote_name_with_spaces", $defaults);
-$defaults = apply_filters ( $string_with_spaces, $defaults);
+/**
+  * this is an example doc block that should be detected
+  */
+$defaults = apply_filters('single_quote_name_no_spaces', $first = array('fake', array(1,2,3)), $second, $last);
 
-$defaults = do_action('single_quote_name_no_spaces');
-$defaults = do_action("double_quote_name_no_spaces");
-$defaults = do_action($string_no_spaces);
-$defaults = do_action ( 'single_quote_name_with_spaces' );
-$defaults = do_action ( "double_quote_name_with_spaces" );
-$defaults = do_action ( $string_with_spaces );
+/**
+  * this is an example doc block that should NOT be detected
+  */
+$bar = 'baz';
+
+
+/**
+  * this is an example doc block that should NOT be detected
+  */
+function non_functional() {
+	$lots = of_code();
+	//goes here
+}
+
+/**
+ *	Another doc block
+ *	that should get detected
+ */
+
+
+$defaults2 = apply_filters(
+	'single_quote_no_spaces2', 
+	$xtrafirst = array(
+		'fake', 
+		array(
+			1,
+			2,
+			3,
+			array(
+				4,
+				5,
+				6
+			),
+		),
+	), 
+	$xtrasecond = "VALUE", 
+	$xtralast = 'another value'
+);
+
+
+function 
+	apply_filters() {}
+
+
+
+//$defaults = apply_filters('single_quote_name_no_spaces', $first = array('fake', array(1,2,3)), $second, $third);
