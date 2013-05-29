@@ -9,21 +9,27 @@ class fase_wp_filter_action_parser {
 
 	private $file_list;
 	private $parsed_files;
-	private $verbose;
 	private $tokens;
 	private $strings_to_parse = array(
 		'apply_filters', 
 		'do_action', 
 		'do_action_ref_array',
 	);
+	private $options;
 
-	private $processed_files; // Holder for files that were found, separated by file.
-	private $processed_finds; // Holder for actouns/filters that were found, separated by action/filter type.
+	public $processed_files; // Holder for files that were found, separated by file.
+	public $processed_finds; // Holder for actouns/filters that were found, separated by action/filter type.
 
 	// Do a little setup
-	function __construct($file_list = null, $verbose = true) {
+	function __construct($file_list = null, $options = array()) {
 		$this->file_list = $file_list;
-		$this->verbose = $verbose;
+		
+		$defaults = array(
+			'verbose' => true,
+			'format' => 'html'
+		);
+		$this->options = array_merge($defaults, $options);
+
 	}
 
 	/**
@@ -41,27 +47,12 @@ class fase_wp_filter_action_parser {
 	/**
 	 * Pull out gathered information and output reports.
 	 */ 
-	function assemble_reports() {
-		echo "<html><head><title>EXAMPLE</title><body>";
+	function assemble_reports($type = 'html') {
 
-		ksort($this->processed_finds);
-		foreach ($this->processed_finds as $type => $finds) {
-			echo "<h1>$type</h1>";
+		$name = 'output_' . $type ;
+		$report = new $name($this);
 
-			ksort ($finds);
-			foreach ($finds as $find_name => $instances) {
-				echo "<h2>$find_name</h2>";
-				echo '<table border="1" cellspacing="0" cellpadding="3" width="100%">';
-				echo "<tr><td valign='top'>";
-				foreach ($instances as $instance) {
-					echo "<p>{$instance['file']['fullpath']} ({$instance['token'][2]})</p>";
-				}
-				echo "</td></tr>";
-				echo "</table><br>";
-			}
-		}
-
-		echo "</body></html>";
+		echo $report->get_output();
 
 	}
 

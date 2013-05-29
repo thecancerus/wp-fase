@@ -12,13 +12,17 @@ $defaults = apply_filters('single_quote_name_no_spaces', $first = array('fake', 
   */
 $bar = 'baz';
 
-
 /**
   * this is an example doc block that should NOT be detected
   */
 function non_functional() {
 	$lots = of_code();
 	//goes here
+
+	/**
+	  * this is an example doc block that should be detected. It sits above an action inside a function.
+	  */
+	$defaults = do_action('single_quote_name_no_spaces', $first = array('fake', array(1,2,3)), $second, $last);
 }
 
 /**
