@@ -16,8 +16,9 @@ class fase_wp_extractor {
 	function extract() {
 		// Parse and assign options
 		$options_short = ''
-			.'d:' // Direcotry to traverse
-			.'f:' // File Types, comma seaparated. Defaults to 'php, inc'
+			.'d:'	// Direcotry to traverse
+			.'f:'	// File Types, comma seaparated. Defaults to 'php, inc'
+			.'t:'	// Output file type (html, json, text) - defualt is html
 			.'v'	// Verbose
 			;
 		$options = getopt($options_short);
@@ -35,9 +36,30 @@ class fase_wp_extractor {
 			die("ERROR: no directory specified\n");
 		}
 
+		// Not used yet.
 		if (!isset($options['o'])) {
 			$output_file = 'fase-wp.txt';
 		}
+
+		// Define the type of output.
+		if (!isset($options['t'])) {
+			$options['t'] = 'html';
+		}
+		switch ($options['t']) {
+			case 'json':
+				$options['t'] = 'json';
+			break;
+
+			case 'text':
+				$options['t'] = 'text';
+			break;
+
+			case 'html':
+			default:
+				$options['t'] = 'html';
+			break;
+		}
+
 
 		// Process "verbosity"
 		$verbose = (isset($options['v'])) ? true : false;
@@ -63,7 +85,12 @@ class fase_wp_extractor {
 			
 		//var_dump($file_list);
 
-		$parser = new fase_wp_filter_action_parser($file_list);
+		$parser = new fase_wp_filter_action_parser(
+			$file_list, 
+			array(
+				'format' => $options['t'],
+			)
+		);
 		$parser->parse_file_list();
 	}
 }

@@ -29,7 +29,6 @@ class fase_wp_filter_action_parser {
 			'format' => 'html'
 		);
 		$this->options = array_merge($defaults, $options);
-
 	}
 
 	/**
@@ -41,7 +40,7 @@ class fase_wp_filter_action_parser {
 				$this->parse_file($file);
 			}
 		}
-		$this->assemble_reports();
+		$this->assemble_reports($this->options['format']);
 	}
 
 	/**
@@ -241,7 +240,8 @@ class fase_wp_filter_action_parser {
 
 	// http://codex.wordpress.org/Function_Reference/apply_filters
 	function processor_apply_filters($token, $find, $file_name) {
-		$tag= $this->normalize_tag_names(array_shift($find['parameters']));
+
+		$tag = $this->normalize_tag_names(array_shift($find['parameters']));
 		$value = array_shift($find['parameters']);
 		$vars = $find['parameters'];
 
@@ -249,6 +249,7 @@ class fase_wp_filter_action_parser {
 			'token' => $token,
 			'type' => 'apply_filters',
 			'hook' => $tag,
+			'value_modified' => $value,
 			'optional_vars' => $vars,
 			'data' => $find,
 		);
@@ -257,6 +258,7 @@ class fase_wp_filter_action_parser {
 			'token' => $token,
 			'file' => $file_name,
 			'hook' => $tag,
+			'value_modified' => $value,
 			'optional_vars' => $vars,
 			'data' => $find,
 		);
@@ -280,7 +282,7 @@ class fase_wp_filter_action_parser {
 	// http://codex.wordpress.org/Function_Reference/do_action
 	function processor_do_action($token, $find, $file_name) {
 		$tag = $this->normalize_tag_names(array_shift($find['parameters']));
-		$value = array_shift($find['parameters']);
+		//$value = array_shift($find['parameters']);
 		$vars = $find['parameters'];
 
 		$this->processed_files[$file_name['fullpath']][$token[2]] = array(
