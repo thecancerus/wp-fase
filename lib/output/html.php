@@ -20,19 +20,19 @@ class output_html extends fase_wp_reports {
 		ksort($this->parser->processed_finds);
 		foreach ($this->parser->processed_finds as $type => $finds) {
 			$this->output .= "\t<h1>$type</h1>\n\n";
-
+	
 			ksort ($finds);
 			foreach ($finds as $find_name => $instances) {
 				$this->output .= "\t<h2>$find_name</h2>\n\n";
-
+	
 				foreach ($instances as $instance) {
 					$this->output .= "\t\t\t<h3>Called in '" . htmlspecialchars($instance['file']['fullpath']) . "' (" . htmlspecialchars($instance['token'][2]) . ")</h3>\n";
-
+	
 					$this->output .= "\t\t\t<blockquote>\n";
 					if (isset($instance['value_modified'])) {
 						$this->output .= "\t\t\t<p><b>Value Modified:</b> ". htmlspecialchars($instance['value_modified']) . "</p>\n";
 					}
-
+	
 					if (count($instance['optional_vars']) > 0) {
 						$this->output .= "\t\t\t<p><b>Parameters:</b>\n\t\t\t<ul>\n";
 						foreach ($instance['optional_vars'] as $var_name) {
@@ -40,29 +40,22 @@ class output_html extends fase_wp_reports {
 						}
 						$this->output .= "\t\t\t</ul>\n";
 					}
-
+	
 					if (isset($instance['data']['docblock'])) {
 						
 						$docblock = $instance['data']['docblock'];
-
+	
 						// Get rid of actual comment markup
 						$docblock = str_replace('/**', '', $docblock);
 						$docblock = str_replace('*/', '', $docblock);
 						$docblock = preg_replace( '/^\s*\*/m', '', $docblock);
-
+	
 						$this->output .= "\n<pre>\n";
 						$this->output .= htmlspecialchars($docblock);
 						$this->output .= "\n</pre>\n";
 					}
 					$this->output .= "\t\t\t</blockquote>\n";
-
-
-				//	$this->output .= "<pre>";
-				//	$this->output .= print_r($instance, true);
-				//	$this->output .= "</pre>";
 				}
-				//$this->output .= "\t\t</td></tr>\n";
-				//$this->output .= "\t</table><br>\n\n";
 			}
 		}
 
@@ -71,21 +64,39 @@ class output_html extends fase_wp_reports {
 			$this->output .= "\t<h1>$file</h1>\n\n";
 
 			ksort ($lines);
-			foreach ($lines as $line_number => $data) {
-				$this->output .= "\t<h2>$file: $line_number</h2>\n\n";
-				$this->output .= "\t" . '<table border="1" cellspacing="0" cellpadding="3" width="100%">' . "\n";
-				$this->output .= "\t\t<tr><td valign='top'>\n";
-				//foreach ($data as $instance) {
-					$this->output .= "<pre>";
-					$this->output .= print_r($data, true);
-					$this->output .= "</pre>";
+			foreach ($lines as $line_number => $instance) {
+			//	$this->output .= "\t<h2>Line $line_number</h2>\n\n";
 
-					//$this->output .= 
+				$this->output .= "\t\t<h3>$line_number: " . $instance['type'] . ": '" . $instance['hook'] . "'</h3>";
 
-					//$this->output .= "\t\t\t<p>{$instance['file']['fullpath']} ({$instance['token'][2]})</p>\n";
-				//}
-				$this->output .= "\t\t</td></tr>\n";
-				$this->output .= "\t</table><br>\n\n";
+				$this->output .= "\t\t\t<blockquote>\n";
+
+				if (isset($instance['value_modified'])) {
+					$this->output .= "\t\t\t<p><b>Value Modified:</b> ". htmlspecialchars($instance['value_modified']) . "</p>\n";
+				}
+
+				if (count($instance['optional_vars']) > 0) {
+					$this->output .= "\t\t\t<p><b>Parameters:</b>\n\t\t\t<ul>\n";
+					foreach ($instance['optional_vars'] as $var_name) {
+						$this->output .= "\t\t\t\t<li>" . htmlspecialchars($var_name) . "</li>\n";
+					}
+					$this->output .= "\t\t\t</ul>\n";
+				}
+
+				if (isset($instance['data']['docblock'])) {
+					
+					$docblock = $instance['data']['docblock'];
+
+					// Get rid of actual comment markup
+					$docblock = str_replace('/**', '', $docblock);
+					$docblock = str_replace('*/', '', $docblock);
+					$docblock = preg_replace( '/^\s*\*/m', '', $docblock);
+
+					$this->output .= "\n<pre>\n";
+					$this->output .= htmlspecialchars($docblock);
+					$this->output .= "\n</pre>\n";
+				}
+				$this->output .= "\t\t\t</blockquote>\n";
 			}
 		}
 

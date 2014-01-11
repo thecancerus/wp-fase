@@ -1,5 +1,12 @@
 # FASE-WP CHANGE LOG
 
+## V0.14
+- HTML output functional and formatted for output by hook and file
+- plain text output functional for output by hook and file
+- initial support for "add_action"
+- initial support for "add_filter"
+- add .gitignore file with "file.html" ignored
+
 ## V0.13
 - Flesh out most of HTML output
 - Add CSS styling to HTML output

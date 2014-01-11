@@ -11,9 +11,12 @@ class fase_wp_filter_action_parser {
 	private $parsed_files;
 	private $tokens;
 	private $strings_to_parse = array(
+		'add_action',
+		'add_filter',
 		'apply_filters', 
 		'do_action', 
 		'do_action_ref_array',
+
 	);
 	private $options;
 
@@ -237,6 +240,35 @@ class fase_wp_filter_action_parser {
 		return $tag;
 	}
 
+	// http://codex.wordpress.org/Function_Reference/add_filter
+	function processor_add_filter($token, $find, $file_name) {
+
+		$tag = $this->normalize_tag_names(array_shift($find['parameters']));
+		$value = array_shift($find['parameters']);
+		$vars = $find['parameters'];
+
+		$this->processed_files[$file_name['fullpath']][$token[2]] = array(
+			'token' => $token,
+			'type' => 'add_filter',
+			'hook' => $tag,
+			'value_modified' => $value,
+			'optional_vars' => $vars,
+			'data' => $find,
+		);
+
+		$this->processed_finds['add_filter'][$tag][] = array(
+			'token' => $token,
+			'file' => $file_name,
+			'hook' => $tag,
+			'value_modified' => $value,
+			'optional_vars' => $vars,
+			'data' => $find,
+		);
+
+	
+		return;
+	}
+
 
 	// http://codex.wordpress.org/Function_Reference/apply_filters
 	function processor_apply_filters($token, $find, $file_name) {
@@ -276,6 +308,35 @@ class fase_wp_filter_action_parser {
 		//}
 		//echo $message;
 
+		return;
+	}
+
+	// http://codex.wordpress.org/Function_Reference/add_action
+	function processor_add_action($token, $find, $file_name) {
+
+		$tag = $this->normalize_tag_names(array_shift($find['parameters']));
+		$value = array_shift($find['parameters']);
+		$vars = $find['parameters'];
+
+		$this->processed_files[$file_name['fullpath']][$token[2]] = array(
+			'token' => $token,
+			'type' => 'add_action',
+			'hook' => $tag,
+			'value_modified' => $value,
+			'optional_vars' => $vars,
+			'data' => $find,
+		);
+
+		$this->processed_finds['add_action'][$tag][] = array(
+			'token' => $token,
+			'file' => $file_name,
+			'hook' => $tag,
+			'value_modified' => $value,
+			'optional_vars' => $vars,
+			'data' => $find,
+		);
+
+	
 		return;
 	}
 

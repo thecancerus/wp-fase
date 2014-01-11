@@ -6,7 +6,7 @@ This package is designed to traverse and arbitrary folder and find all instances
 
 This project is very much "alpha" and still in very early development.
 
-_Current Version:_ 0.13 (2014-01-10)
+**Current Version:** 0.14 (2014-01-11)
 
 ## Invoking
 
@@ -24,8 +24,13 @@ Some options, such as the directory, are required. The following options are ava
 
 	-v 	Verbose mode, no parameters - turns on verbose reporting
 
+## Immediate TODO
+
+- Add proper processing and output formatting for `add_action` and `add_filter`
+
 ## Planned Features
 
-- Split putput into multiple files
+- Split output into multiple files
+	- broken down by actions, filters, files
 - Speficiy a single file for output on the command line
 - Override CSS styling for HTML 
