@@ -1,5 +1,12 @@
 # FASE-WP CHANGE LOG
 
+## V0.15
+- add_action properly assembled and output in HTML and text
+- add_filter properly assembled and output in HTML and text
+- add `<a>` tag references to CSS
+- add names and href links within the HTML document
+- add header links at top of HTML document for easy access
+
 ## V0.14
 - HTML output functional and formatted for output by hook and file
 - plain text output functional for output by hook and file

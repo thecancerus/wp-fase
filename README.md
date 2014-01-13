@@ -6,7 +6,7 @@ This package is designed to traverse and arbitrary folder and find all instances
 
 This project is very much "alpha" and still in very early development.
 
-**Current Version:** 0.14 (2014-01-11)
+**Current Version:** 0.15 (2014-01-13)
 
 ## Invoking
 
