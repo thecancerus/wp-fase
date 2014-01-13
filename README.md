@@ -26,11 +26,10 @@ Some options, such as the directory, are required. The following options are ava
 
 ## Immediate TODO
 
-- Add proper processing and output formatting for `add_action` and `add_filter`
+- Override CSS styling for HTML 
 
 ## Planned Features
 
 - Split output into multiple files
 	- broken down by actions, filters, files
 - Speficiy a single file for output on the command line
-- Override CSS styling for HTML 
