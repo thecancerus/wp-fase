@@ -4,6 +4,8 @@
  *		'dir' => $dir,
  *		'file' => $file,
  *		'fullpath' => $dir . '/' . $file,
+ *
+ *
  */
 class fase_wp_filter_action_parser {
 
@@ -244,27 +246,39 @@ class fase_wp_filter_action_parser {
 	function processor_add_filter($token, $find, $file_name) {
 
 		$tag = $this->normalize_tag_names(array_shift($find['parameters']));
-		$value = array_shift($find['parameters']);
-		$vars = $find['parameters'];
+		$function_to_add = array_shift($find['parameters']);
+		
+		if (count($find['parameters']) > 0) {
+			$priority = array_shift($find['parameters']);
+		} 
+		else {
+			$priority = '10 (default)';
+		}
+
+		if (count($find['parameters']) > 0) {
+			$arguments = array_shift($find['parameters']);
+		} 
+		else {
+			$arguments = '1 (default)';
+		}
 
 		$this->processed_files[$file_name['fullpath']][$token[2]] = array(
 			'token' => $token,
 			'type' => 'add_filter',
 			'hook' => $tag,
-			'value_modified' => $value,
-			'optional_vars' => $vars,
-			'data' => $find,
+			'function_to_add' => $function_to_add,
+			'priority' => $priority,
+			'arguments' => $arguments,
 		);
 
 		$this->processed_finds['add_filter'][$tag][] = array(
 			'token' => $token,
 			'file' => $file_name,
 			'hook' => $tag,
-			'value_modified' => $value,
-			'optional_vars' => $vars,
-			'data' => $find,
+			'function_to_add' => $function_to_add,
+			'priority' => $priority,
+			'arguments' => $arguments,
 		);
-
 	
 		return;
 	}
@@ -315,27 +329,39 @@ class fase_wp_filter_action_parser {
 	function processor_add_action($token, $find, $file_name) {
 
 		$tag = $this->normalize_tag_names(array_shift($find['parameters']));
-		$value = array_shift($find['parameters']);
-		$vars = $find['parameters'];
+		$function_to_add = array_shift($find['parameters']);
+		
+		if (count($find['parameters']) > 0) {
+			$priority = array_shift($find['parameters']);
+		} 
+		else {
+			$priority = '10 (default)';
+		}
+
+		if (count($find['parameters']) > 0) {
+			$arguments = array_shift($find['parameters']);
+		} 
+		else {
+			$arguments = '1 (default)';
+		}
 
 		$this->processed_files[$file_name['fullpath']][$token[2]] = array(
 			'token' => $token,
 			'type' => 'add_action',
 			'hook' => $tag,
-			'value_modified' => $value,
-			'optional_vars' => $vars,
-			'data' => $find,
+			'function_to_add' => $function_to_add,
+			'priority' => $priority,
+			'arguments' => $arguments,
 		);
 
 		$this->processed_finds['add_action'][$tag][] = array(
 			'token' => $token,
 			'file' => $file_name,
 			'hook' => $tag,
-			'value_modified' => $value,
-			'optional_vars' => $vars,
-			'data' => $find,
+			'function_to_add' => $function_to_add,
+			'priority' => $priority,
+			'arguments' => $arguments,
 		);
-
 	
 		return;
 	}

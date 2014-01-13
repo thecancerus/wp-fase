@@ -12,24 +12,36 @@ class output_text extends fase_wp_reports {
 
 		ksort($this->parser->processed_finds);
 		foreach ($this->parser->processed_finds as $type => $finds) {
-			$this->output .= "TYPE: $type\n\n";
+			$this->output .= "\n\nTYPE: $type\n";
 
 			ksort ($finds);
 			foreach ($finds as $find_name => $instances) {
-				$this->output .= "\n** NAME: $find_name\n\n";
+				$this->output .= "\n** NAME: $find_name\n";
 
 				foreach ($instances as $instance) {
-					$this->output .= "CALLED IN: '" . $instance['file']['fullpath'] . "' (" . $instance['token'][2] . ")\n";
+					$this->output .= "\nCALLED IN: '" . $instance['file']['fullpath'] . "' (" . $instance['token'][2] . ")\n";
 
 					if (isset($instance['value_modified'])) {
 						$this->output .= "VALUE MODIFIED: ". $instance['value_modified'] . "\n";
 					}
 
-					if (count($instance['optional_vars']) > 0) {
+					if (isset($instance['optional_vars']) && count($instance['optional_vars']) > 0) {
 						$this->output .= "PARAMETERS\n";
 						foreach ($instance['optional_vars'] as $var_name) {
 							$this->output .= " - " . $var_name . "\n";
 						}
+					}
+
+					if (isset($instance['function_to_add'])) {
+						$this->output .= "FUNCTION CALLED: ". $instance['function_to_add'] . "\n";
+					}
+
+					if (isset($instance['priority'])) {
+						$this->output .= "PRIORITY: ". $instance['priority'] . "\n";
+					}
+
+					if (isset($instance['arguments'])) {
+						$this->output .= "ARGUMENT COUNT: ". $instance['arguments'] . "\n";
 					}
 
 					if (isset($instance['data']['docblock'])) {
@@ -58,14 +70,26 @@ class output_text extends fase_wp_reports {
 				$this->output .= "\n$line_number: " . $instance['type'] . ": '" . $instance['hook'] . "'\n";
 
 				if (isset($instance['value_modified'])) {
-					$this->output .= "VALUE MODIFIED ". htmlspecialchars($instance['value_modified']) . "\n";
+					$this->output .= "VALUE MODIFIED ". $instance['value_modified'] . "\n";
 				}
 
-				if (count($instance['optional_vars']) > 0) {
+				if (isset($instance['optional_vars']) && count($instance['optional_vars']) > 0) {
 					$this->output .= "PARAMETERS\n";
 					foreach ($instance['optional_vars'] as $var_name) {
-						$this->output .= " - " . htmlspecialchars($var_name) . "\n";
+						$this->output .= " - " . $var_name . "\n";
 					}
+				}
+
+				if (isset($instance['function_to_add'])) {
+					$this->output .= "FUNCTION CALLED: ". $instance['function_to_add'] . "\n";
+				}
+
+				if (isset($instance['priority'])) {
+					$this->output .= "PRIORITY: ". $instance['priority'] . "\n";
+				}
+
+				if (isset($instance['arguments'])) {
+					$this->output .= "ARGUMENT COUNT: ". $instance['arguments'] . "\n";
 				}
 
 				if (isset($instance['data']['docblock'])) {
