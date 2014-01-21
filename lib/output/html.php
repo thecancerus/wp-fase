@@ -5,7 +5,6 @@
 class output_html extends fase_wp_reports {
 
 	public function __construct($parser) {
-		//parent::__construct($parser);
 		$this->parser = $parser;
 	}
 
@@ -15,15 +14,15 @@ class output_html extends fase_wp_reports {
 		$this->output .= $this->addCSS();
 		$this->output .= "\n</head>\n<body>\n";
 
-		$this->output .= "<h1>Quick links</h1>";
-		$this->output .= "<ul>";
-		$this->output .= "\t<li><a href='#header_add_action'>add_action</a>";
-		$this->output .= "\t<li><a href='#header_add_filter'>add_filter</a>";
-		$this->output .= "\t<li><a href='#header_apply_filters'>apply_filters</a>";
+		$this->output .= "<h1>Quick links</h1>\n";
+		$this->output .= "<ul>\n";
+		$this->output .= "\t<li><a href='#header_add_action'>add_action</a></li>\n";
+		$this->output .= "\t<li><a href='#header_add_filter'>add_filter</a></li>\n";
+		$this->output .= "\t<li><a href='#header_apply_filters'>apply_filters</a></li>\n";
 		$this->output .= "\t<li><a href='#header_do_action'>do_action</a>";
-		$this->output .= "\t<li><a href='#header_do_action_ref_array'>do_action_ref_array</a>";
-		$this->output .= "\t<li><a href='#header_files'>files</a>";
-		$this->output .= "</ul>";
+		$this->output .= "\t<li><a href='#header_do_action_ref_array'>do_action_ref_array</a></li>\n";
+		$this->output .= "\t<li><a href='#header_files'>files</a></li>\n";
+		$this->output .= "</ul>\n";
 
 		// Asseemble by call type (add_filter, do_action, etc.)
 		ksort($this->parser->processed_finds);
@@ -36,8 +35,8 @@ class output_html extends fase_wp_reports {
 	
 				foreach ($instances as $instance) {
 					$this->output .= "\t\t\t<h3>Called in ";
-					$this->output .= "<a href='#" . str_replace(array('"', "'"), '', $instance['file']['fullpath'] . $instance['token'][2]) . "'>'";
-					$this->output .= htmlspecialchars($instance['file']['fullpath']) . "' (" . htmlspecialchars($instance['token'][2]) . ")</a></h3>\n";
+					$this->output .= "<a href='#" . str_replace(array('"', "'"), '', $instance['file']['friendly_name'] . $instance['token'][2]) . "'>'";
+					$this->output .= htmlspecialchars($instance['file']['friendly_name']) . "' (" . htmlspecialchars($instance['token'][2]) . ")</a></h3>\n";
 					
 					$this->output .= "\t\t\t<blockquote>\n";
 					if (isset($instance['value_modified'])) {
@@ -157,7 +156,7 @@ class output_html extends fase_wp_reports {
 			html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, 
 			big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, 
 			dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, 
-			canvas, details, embed,  figure, figcaption, footer, header, hgroup,  menu, nav, output, ruby, section, summary, 
+			canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, 
 			time, mark, audio, video { 
 				margin: 0; padding: 0; border: 0; font-size: 100%; font: inherit; 
 				font-family: "Source Sans Pro", Arial, Helvetica, sans-serif; vertical-align: baseline; text-align: left; color: #111;

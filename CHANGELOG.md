@@ -1,5 +1,12 @@
 # FASE-WP CHANGE LOG
 
+## V0.16
+- Code cleanup and dead code removal
+- Documentation update
+- add support for text removal from front of file path names by default
+- add '-r' parameter for command line to override default text removal in file paths
+- replaced magic numbers from PHP tokenizer with meaningful constants in action parser
+
 ## V0.15
 - add_action properly assembled and output in HTML and text
 - add_filter properly assembled and output in HTML and text
