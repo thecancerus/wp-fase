@@ -28,6 +28,12 @@ class fase_wp_extractor {
 		if (isset($options['d']) && substr($options['d'], -1) == '/') {
 			$options['d'] = substr($options['d'], 0 , -1);
 		}
+
+		// Set text to remove from file paths if not specified
+		if (!isset($options['r'])) {
+			$options['r'] = $options['d'];
+		}
+
 		// Make sure the directory exists and is specified
 		if (isset($options['d']) && !is_dir($options['d'])) {
 			die("ERROR: invalid directory specified\n");
@@ -60,10 +66,8 @@ class fase_wp_extractor {
 			break;
 		}
 
-
 		// Process "verbosity"
 		$verbose = (isset($options['v'])) ? true : false;
-
 
 		// Process $options['f'] - get file types into an array with sensible defaults
 		if (! isset($options['f'])) {
@@ -78,7 +82,7 @@ class fase_wp_extractor {
 		show("Looking in file types: " . implode(', ', $options['f']));
 		show("Traversing: " . $options['d']);
 
-		$files = new fase_wp_file_list($options['d'], $options['f'], $verbose);
+		$files = new fase_wp_file_list($options['d'], $options['f'], $verbose, $options['r']);
 		$file_list = $files->get_files();
 
 		//$file_list[] = array('dir' => 'fakedir', 'file' => 'fakefile.txt', 'fullpath' => 'fakedir/fakefile.txt');
