@@ -17,8 +17,8 @@
  * Simple JSON output.
  */
 class output_json extends fase_wp_reports {
+
 	public function __construct($parser) {
-		//parent::__construct($parser);
 		$this->parser = $parser;
 	}
 

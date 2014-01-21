@@ -23,6 +23,9 @@
  */
 class fase_wp_filter_action_parser {
 
+	public $processed_files; // Holder for files that were found, separated by file.
+	public $processed_finds; // Holder for actouns/filters that were found, separated by action/filter type.
+
 	private $file_list;
 	private $parsed_files;
 	private $tokens;
@@ -32,17 +35,17 @@ class fase_wp_filter_action_parser {
 		'apply_filters', 
 		'do_action', 
 		'do_action_ref_array',
-
 	);
 	private $options;
 
-	public $processed_files; // Holder for files that were found, separated by file.
-	public $processed_finds; // Holder for actouns/filters that were found, separated by action/filter type.
+	const TOKEN_TYPE = 0;
+	const TOKEN_TEXT = 1;
+	const TOKEN_LINE_NUMBER = 2;
 
 	// Do a little setup
 	function __construct($file_list = null, $options = array()) {
 		$this->file_list = $file_list;
-		
+
 		$defaults = array(
 			'verbose' => true,
 			'format' => 'html'
@@ -96,11 +99,11 @@ class fase_wp_filter_action_parser {
 
 		// Iterate processed tokens
 		foreach ($this->tokens as $key => $token) {
-			if (is_array($token) && ($token[0] == T_STRING)) {
-				if (in_array($token[1], $this->strings_to_parse)) {
+			if (is_array($token) && ($token[self::TOKEN_TYPE] == T_STRING)) {
+				if (in_array($token[self::TOKEN_TEXT], $this->strings_to_parse)) {
 					if ($this->is_function_definition($key) == false) {
 						$find = $this->process_raw_find($key);
-						$processor = 'processor_'.$token[1];
+						$processor = 'processor_'.$token[self::TOKEN_TEXT];
 						if (method_exists($this, $processor)) {
 							$this->$processor($token, $find, $file_name);
 						}
@@ -118,7 +121,7 @@ class fase_wp_filter_action_parser {
 	 */
 	function process_raw_find($key) {
 		// What did we find?
-		$find_type = $this->tokens[$key][1];
+		$find_type = $this->tokens[$key][self::TOKEN_TEXT];
 
 		// Search back for docblock
 		$docblock = $this->process_raw_docblock($key);
@@ -149,9 +152,9 @@ class fase_wp_filter_action_parser {
 				$processed = $this->process_raw_parameters($key);
 
 				// Add the parameter string
-				$parameters[] = $processed[0];
+				$parameters[] = $processed[self::TOKEN_TYPE];
 				// Add the offset
-				$key += $processed[1];
+				$key += $processed[self::TOKEN_TEXT];
 			}
 			// End of logical line or function call...
 			if ($this->tokens[$key] == ';' || $this->tokens[$key] == ')') {
@@ -182,8 +185,8 @@ class fase_wp_filter_action_parser {
 			// Break on commas unless they're inside a paren
 			if (($this->tokens[$key] != ',' || $paren_count > 0) ) {
 				// Add anything that's a non-whitespace token
-				if (is_array($this->tokens[$key]) && ($this->tokens[$key][0] !== T_WHITESPACE)) {
-					$parameter .= $this->tokens[$key][1];
+				if (is_array($this->tokens[$key]) && ($this->tokens[$key][self::TOKEN_TYPE] !== T_WHITESPACE)) {
+					$parameter .= $this->tokens[$key][self::TOKEN_TEXT];
 				} 
 				else if (is_string($this->tokens[$key]) && (($this->tokens[$key] != ')' || $paren_count >= 0))) {
 					$parameter .= $this->tokens[$key];
@@ -209,8 +212,8 @@ class fase_wp_filter_action_parser {
 			if ($this->tokens[$key] == ';' || $this->tokens[$key] == '}') {
 				break;
 			}
-			if (is_array($this->tokens[$key]) && $this->tokens[$key][0] == T_DOC_COMMENT) {
-				return $this->tokens[$key][1];
+			if (is_array($this->tokens[$key]) && $this->tokens[$key][self::TOKEN_TYPE] == T_DOC_COMMENT) {
+				return $this->tokens[$key][self::TOKEN_TEXT];
 			}
 			$key--;
 		}
@@ -223,13 +226,13 @@ class fase_wp_filter_action_parser {
 	 */
 	function is_function_definition($key) {
 		while ($key > 0) {
-			// Ignore  whitespace
-			if (is_array($this->tokens[$key]) && ($this->tokens[$key][0] == T_WHITESPACE)) {
+			// Ignore whitespace
+			if (is_array($this->tokens[$key]) && ($this->tokens[$key][self::TOKEN_TYPE] == T_WHITESPACE)) {
 				$key--;
 				continue;
 			}
 			// Is it T_FUNCTION? Yes, then we've got a function definition
-			if (is_array($this->tokens[$key]) && ($this->tokens[$key][0] == T_FUNCTION)) {
+			if (is_array($this->tokens[$key]) && ($this->tokens[$key][self::TOKEN_TYPE] == T_FUNCTION)) {
 				return true;
 			} 
 			// Anything else it's not a function definition
@@ -256,6 +259,8 @@ class fase_wp_filter_action_parser {
 		return $tag;
 	}
 
+/** HERE BE THE PROCESSORS **/
+
 	// http://codex.wordpress.org/Function_Reference/add_filter
 	function processor_add_filter($token, $find, $file_name) {
 
@@ -276,7 +281,7 @@ class fase_wp_filter_action_parser {
 			$arguments = '1 (default)';
 		}
 
-		$this->processed_files[$file_name['fullpath']][$token[2]] = array(
+		$this->processed_files[$file_name['friendly_name']][$token[self::TOKEN_LINE_NUMBER]] = array(
 			'token' => $token,
 			'type' => 'add_filter',
 			'hook' => $tag,
@@ -293,7 +298,6 @@ class fase_wp_filter_action_parser {
 			'priority' => $priority,
 			'arguments' => $arguments,
 		);
-	
 		return;
 	}
 
@@ -305,7 +309,7 @@ class fase_wp_filter_action_parser {
 		$value = array_shift($find['parameters']);
 		$vars = $find['parameters'];
 
-		$this->processed_files[$file_name['fullpath']][$token[2]] = array(
+		$this->processed_files[$file_name['friendly_name']][$token[self::TOKEN_LINE_NUMBER]] = array(
 			'token' => $token,
 			'type' => 'apply_filters',
 			'hook' => $tag,
@@ -322,20 +326,6 @@ class fase_wp_filter_action_parser {
 			'optional_vars' => $vars,
 			'data' => $find,
 		);
-
-		//$message = "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n";
-		//$message .= $file_name['fullpath'] . ' on line ' . $token[2] . "\n";
-		//$message .= "apply_filter\n";
-		//$message .= "  Hook: $tag\n";
-		//$message .= "  Value to modify: $value\n";
-		//if (count($vars) > 0) {
-		//	foreach ($vars as $var) {
-		//		$message .= "    - optional var: " . $var;
-		//		$message .= "\n";
-		//	}
-		//}
-		//echo $message;
-
 		return;
 	}
 
@@ -359,7 +349,7 @@ class fase_wp_filter_action_parser {
 			$arguments = '1 (default)';
 		}
 
-		$this->processed_files[$file_name['fullpath']][$token[2]] = array(
+		$this->processed_files[$file_name['friendly_name']][$token[self::TOKEN_LINE_NUMBER]] = array(
 			'token' => $token,
 			'type' => 'add_action',
 			'hook' => $tag,
@@ -376,7 +366,6 @@ class fase_wp_filter_action_parser {
 			'priority' => $priority,
 			'arguments' => $arguments,
 		);
-	
 		return;
 	}
 
@@ -386,7 +375,7 @@ class fase_wp_filter_action_parser {
 		//$value = array_shift($find['parameters']);
 		$vars = $find['parameters'];
 
-		$this->processed_files[$file_name['fullpath']][$token[2]] = array(
+		$this->processed_files[$file_name['friendly_name']][$token[self::TOKEN_LINE_NUMBER]] = array(
 			'token' => $token,
 			'type' => 'do_action',
 			'hook' => $tag,
@@ -401,19 +390,6 @@ class fase_wp_filter_action_parser {
 			'optional_vars' => $vars,
 			'data' => $find,
 		);
-
-		//$message = "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n";
-		//$message .= $file_name['fullpath'] . ' on line ' . $token[2] . "\n";
-		//$message .= "do_action\n";
-		//$message .= "  Hook: $tag\n";
-		//if (count($vars) > 0) {
-		//	foreach ($vars as $var) {
-		//		$message .= "    - argument: " . $var;
-		//		$message .= "\n";
-		//	}
-		//}
-		//echo $message;
-
 		return;
 	}
 
@@ -422,7 +398,7 @@ class fase_wp_filter_action_parser {
 		$tag = $this->normalize_tag_names(array_shift($find['parameters']));
 		$arguments = $find['parameters'];
 
-		$this->processed_files[$file_name['fullpath']][$token[2]] = array(
+		$this->processed_files[$file_name['friendly_name']][$token[self::TOKEN_LINE_NUMBER]] = array(
 			'token' => $token,
 			'type' => 'do_action_ref_array',
 			'hook' => $tag,
@@ -437,20 +413,6 @@ class fase_wp_filter_action_parser {
 			'optional_vars' => $arguments,
 			'data' => $find,
 		);
-
-		//$message = "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n";
-		//$message .= $file_name['fullpath'] . ' on line ' . $token[2] . "\n";
-		//$message .= "do_action_ref_array\n";
-		//$message .= "  Hook: $tag\n";
-		//$message .= "  Argument array:\n";
-		//if (count($arguments) > 0) {
-		//	foreach ($arguments as $var) {
-		//		$message .= "    - array: " . $var;
-		//		$message .= "\n";
-		//	}
-		//}
-		//echo $message;
-
 		return;
 	}
 
