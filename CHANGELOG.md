@@ -1,4 +1,11 @@
-# FASE-WP CHANGE LOG
+# WP-FASE CHANGE LOG
+
+## V0.17 
+- add copyright and license (Apache License 2.0) information
+- change `__autoload()` to `spl_autoload_regsiter()` call
+- change FASE-WP references to WP-FASE
+- add comment to HTML header and a bit of cleanup in output
+- add comment header to plain text output
 
 ## V0.16
 - Code cleanup and dead code removal
